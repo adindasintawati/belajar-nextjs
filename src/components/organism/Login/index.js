@@ -21,12 +21,6 @@ const Login = () => {
       <Button color={"bg-blue-500 hover:bg-blue-700"} size={"w-full"}>
         Login
       </Button>
-      <p className="text-sm text-center mt-2">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-blue-500 hover:text-blue-700">
-          Register
-        </Link>
-      </p>
     </form>
   );
 };

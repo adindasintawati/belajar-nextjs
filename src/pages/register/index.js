@@ -9,6 +9,7 @@ const RegisterPage = () => {
         <AuthLayout
           title={"Register"}
           desc={"Hi, please register your account"}
+          type="register"
         >
           <Register />
         </AuthLayout>

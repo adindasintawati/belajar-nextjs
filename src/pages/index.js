@@ -1,8 +1,8 @@
 /** file index.js ini dibuat secara otomatis di folder src/pages.
  * file ini akan menjadi halaman utama di aplikasi nextjs*/
 
-import Button from "@/component/atoms/Button";
-import Card from "@/component/molecules/CardWithChildren";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/molecules/CardWithChildren";
 
 export default function Home() {
   return (
