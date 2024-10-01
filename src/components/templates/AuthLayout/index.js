@@ -31,7 +31,7 @@ const AuthLayout = ({ title, desc, children, type = "login" }) => {
           )}
 
           {/* Conditional rendering cara ke-2 dengan logika &&*/}
-          <p className="text-sm text-center mt-2">
+          {/* <p className="text-sm text-center mt-2">
             {type === "login"
               ? "Don't have an account? "
               : "Already have an account? "}
@@ -48,7 +48,7 @@ const AuthLayout = ({ title, desc, children, type = "login" }) => {
                 Login
               </Link>
             )}
-          </p>
+          </p> */}
         </div>
       </div>
     </>
