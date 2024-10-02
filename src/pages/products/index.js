@@ -1,19 +1,24 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { data } from "@/constant/data";
+import BackToTop from "@/components/atoms/Icons/BackToTop";
 
 const ProductsPage = () => {
+  const footerRef = useRef();
+  // useref : hooks dari react yang dipake untuk membuat referensi ke elemen DOM atau mengakses elemen DOM (DOM adalah elemen/tag HTML)
   const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   /** useState : hooks dari react yang memungkinkan kita menambahkan state ke functional component.
    * username : variabel state yang akan menyimpan nilai username
    * setUsername : fungsi yang dipake buat memperbarui nilai username
    * "" (string kosong dalam useState(**)) : nilai awal dari state username
    * ketika setUsername dipanggil dengan nilai baru, react akan me-render ulang komponen dengan nilai state yang baru*/
 
+  // useEffect untuk mendapatkan data dari localStorage
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
     if (getUsername) {
@@ -27,6 +32,7 @@ const ProductsPage = () => {
    * saat komponen pertama kali dirender(load)
    * jika username ditemukan di localStorage, ia menggunakan setUsername untuk memperbarui nilai dari state username*/
 
+  // Event handler untuk logout dan menghapus data dari localStorage
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
@@ -34,6 +40,7 @@ const ProductsPage = () => {
     window.location.href = "/login";
   };
 
+  // event handler untuk menambahkan produk ke Cart
   const handleAddToCard = (id) => {
     // jika ada id yang sama maka akan menambahkan jumlah qty +1
     if (cart.find((item) => item.id === id)) {
@@ -49,6 +56,7 @@ const ProductsPage = () => {
     }
   };
 
+  // useEffect untuk menghitung total harga dan menyimpan data Cart ke localStorage
   useEffect(() => {
     if (cart.length > 0) {
       const sum = cart.reduce((total, item) => {
@@ -59,6 +67,42 @@ const ProductsPage = () => {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart]);
+
+  // useEffect untuk menghandle button backToTop
+  useEffect(() => {
+    function handleScroll() {
+      // footerRef.current.offsettop untuk ambil nilai offsetTop (posisi vertikal atas/bawah) dari elemen footer yang diakses footerRef
+      const footerTop = footerRef.current.offsetTop;
+
+      // window.innerHeight : untuk ambil nilai tinggi objek window (tampilan viewport tanpa toolbar & scrollbar)
+      const viewportHeight = window.innerHeight;
+
+      // window.screenY : untuk ambil nilai scroll sumbu Y dari objek window (posisi scroll di layar vertikal/atas dan bawah)
+      const scrollPosition = window.scrollY;
+
+      if (scrollPosition + viewportHeight >= footerTop) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    }
+
+    // event listener untuk ngecek scroll
+    // fungsi handleScroll akan dijalanin pada saat event scroll terjadi (pada saat layar discroll)
+    window.addEventListener("scroll", handleScroll);
+
+    // kembalikan fungsi yang akan dijalankan saat layar berhenti di scroll
+    return () => {
+      // hapus event listener pada event scroll ketika scroll berhenti
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [footerRef]); // <- [footerRef] akan dipantau setiap kali ada perubahan /(lifecycle)
+
+  // fungsi/eventHandle yang akan dijalankan ketika button di klik
+  const handleBackToTop = () => {
+    // window.scrollTo : untuk men-scrikk layar keatas dengan animasi yang smooth
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -139,6 +183,20 @@ const ProductsPage = () => {
           </div>
         )}
       </div>
+      {showBackToTop && (
+        <div
+          onClick={handleBackToTop}
+          className="fixed bottom-20 bg-blue-600 p-2 right-5 rounded-full"
+        >
+          <BackToTop />
+        </div>
+      )}
+      <footer
+        ref={footerRef}
+        className="text-center p-5 bg-gray-800 text-white w-full font-bold"
+      >
+        Copyright by Adinda
+      </footer>
     </>
   );
 };
