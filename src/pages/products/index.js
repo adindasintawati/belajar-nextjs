@@ -1,30 +1,8 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
-
-const data = [
-  {
-    id: 1,
-    image: "image/odeng.jpg",
-    name: "odeng1",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure molestias ipsum explicabo perspiciatis tempora recusandae enim, voluptate quis aliquam optio?",
-    price: 25000,
-  },
-  {
-    id: 2,
-    image: "image/odeng.jpg",
-    name: "odeng2",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure molestias ipsum explicabo perspiciatis tempora recusandae enim, voluptate quis aliquam optio?",
-    price: 25000,
-  },
-  {
-    id: 3,
-    image: "image/odeng.jpg",
-    name: "odeng3",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure molestias ipsum explicabo perspiciatis tempora recusandae enim, voluptate quis aliquam optio?",
-    price: 25000,
-  },
-];
+import { data } from "@/constant/data";
 
 const ProductsPage = () => {
   const [username, setUsername] = useState("");
@@ -52,6 +30,7 @@ const ProductsPage = () => {
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
+    localStorage.removeItem("cart");
     window.location.href = "/login";
   };
 
@@ -117,8 +96,10 @@ const ProductsPage = () => {
                 return (
                   <>
                     <div key={item.id} className="flex p-4 border rounded-lg">
-                      <img
+                      <Image
                         src={datas.image}
+                        width={500}
+                        height={500}
                         alt="cart item"
                         className="max-w-[100px]"
                       />

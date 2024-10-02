@@ -1,4 +1,5 @@
 import Button from "@/components/atoms/Button";
+import Image from "next/image";
 import React from "react";
 
 /**CardProduct : Komponen utama/parent sebagai pembungkus/container untuk beberapa komponen children(Header, Body, & Footer)*/
@@ -16,7 +17,15 @@ export default CardProduct;
 
 // Header
 function Header({ image }) {
-  return <img src={image} alt={image} className="p-4 rounded-t-lg" />;
+  return (
+    <Image
+      width={500}
+      height={500}
+      src={image}
+      alt={image}
+      className="p-4 rounded-t-lg"
+    />
+  );
 }
 
 // Body
