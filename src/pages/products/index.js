@@ -1,7 +1,13 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { data } from "@/constant/data";
 import BackToTop from "@/components/atoms/Icons/BackToTop";
 
@@ -12,6 +18,15 @@ const ProductsPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [search, setSearch] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const searchProduct = useMemo(() => {
+    return data.filter((product) =>
+      product.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search]);
+
   /** useState : hooks dari react yang memungkinkan kita menambahkan state ke functional component.
    * username : variabel state yang akan menyimpan nilai username
    * setUsername : fungsi yang dipake buat memperbarui nilai username
@@ -40,21 +55,45 @@ const ProductsPage = () => {
     window.location.href = "/login";
   };
 
-  // event handler untuk menambahkan produk ke Cart
-  const handleAddToCard = (id) => {
-    // jika ada id yang sama maka akan menambahkan jumlah qty +1
-    if (cart.find((item) => item.id === id)) {
-      // dia akan mapping dan membongkar itemnya untuk mencari data dengan id yang sama
-      setCart(
-        cart.map((item) =>
-          item.id === id ? { ...item, qty: item.qty + 1 } : item
-        )
-      );
-    } else {
-      // kalo qty datanya cuma 1, maka cuma akan di set 1 qty-nya
-      setCart([...cart, { id, qty: 1 }]);
-    }
-  };
+  // PERBEDAAN useMemo untuk perhitungan matematika dan yang disimpen nilainya
+  // sedangkan useCallback yang disimpen fungsinya
+
+  // eventHandler diganti ke useCallback
+  /** useCallback : hooks yang dipake buat nyimpen FUNGSI di cache agar fungsi hanya dijalankan
+   * ketika ada perubahan pada nilai fungsi tersebut*/
+  const handleAddToCard = useCallback(
+    (id) => {
+      // jika ada id yang sama maka akan menambahkan jumlah qty +1
+      if (cart.find((item) => item.id === id)) {
+        // dia akan mapping dan membongkar itemnya untuk mencari data dengan id yang sama
+        setCart(
+          cart.map((item) =>
+            item.id === id ? { ...item, qty: item.qty + 1 } : item
+          )
+        );
+      } else {
+        // kalo qty datanya cuma 1, maka cuma akan di set 1 qty-nya
+        setCart([...cart, { id, qty: 1 }]);
+      }
+    },
+    [cart]
+  );
+
+  // // event handler untuk menambahkan produk ke Cart
+  // const handleAddToCard = (id) => {
+  //   // jika ada id yang sama maka akan menambahkan jumlah qty +1
+  //   if (cart.find((item) => item.id === id)) {
+  //     // dia akan mapping dan membongkar itemnya untuk mencari data dengan id yang sama
+  //     setCart(
+  //       cart.map((item) =>
+  //         item.id === id ? { ...item, qty: item.qty + 1 } : item
+  //       )
+  //     );
+  //   } else {
+  //     // kalo qty datanya cuma 1, maka cuma akan di set 1 qty-nya
+  //     setCart([...cart, { id, qty: 1 }]);
+  //   }
+  // };
 
   // useMemo untuk menghitung total harga cart dan menyimpan hasil perhitungannya ke chace
   /** useMemo : hooks untuk menyimpan hasil komputasi (perhitungan matematika) di chace
@@ -115,6 +154,31 @@ const ProductsPage = () => {
     <>
       <div className="flex justify-between items-center bg-blue-500 px-5 py-4">
         <h1 className="text-xl">Welcome, {username}</h1>
+        <div className="w-[300px]">
+          <input
+            type="text"
+            placeholder="Search...."
+            className="py-2 px-4 rounded-full w-[300px]"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              if (e.target.value !== "") {
+                setShowSearch(true);
+              } else {
+                setShowSearch(false);
+              }
+            }}
+          />
+          {showSearch && searchProduct.length > 0 && (
+            <ul className="absolute bg-white text-black w-[300px] mt-1 py-2 px-3 rounded-lg">
+              {searchProduct.map((product) => (
+                <li key={product.id} className="my-1">
+                  {product.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <Button color="bg-red-500" textButton="Logout" onClick={handleLogout} />
       </div>
       <div className="flex px-5 py-4">
