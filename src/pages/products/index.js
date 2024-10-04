@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { data } from "@/constant/data";
 import BackToTop from "@/components/atoms/Icons/BackToTop";
+import { getProducts } from "@/services/products";
 
 const ProductsPage = () => {
   const footerRef = useRef();
@@ -20,10 +21,24 @@ const ProductsPage = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [products, setProducts] = useState([]); // <- state untuk nyimpen data dari API
+
+  // useEffect untuk manggil service getProducts
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const dataProduct = await getProducts();
+        setProducts(dataProduct.slice(0, 8));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   const searchProduct = useMemo(() => {
-    return data.filter((product) =>
-      product.name.toLowerCase().includes(search.toLowerCase())
+    return products.filter((product) =>
+      product.title.toLowerCase().includes(search.toLowerCase())
     );
   }, [search]);
 
@@ -99,13 +114,17 @@ const ProductsPage = () => {
   /** useMemo : hooks untuk menyimpan hasil komputasi (perhitungan matematika) di chace
    * agar tidak perlu dijalankan / dihitung ulang ketika tidak ada perubahan,
    * dalam kasus ini, useMemo untuk nyimpen hasil total cart dicache sehingga ketika halaman direfresh,
-   * total cart ga di itung ulang kalo nilainya ga berubah*/
+   * total cart ga di itung ulang kalo nilainya ga berubah
+   *
+   * product?.price <- tanda tanya (?) pada product adalah optional chaining
+   * optional chaining : sebuah penjagaan untuk memastikan nilai/propertinya ada atau tidak dari suatu data,
+   * manfaat dari optimal chaining adalah untuk menghindari error null atau undefined */
   const cartTotal = useMemo(() => {
     return cart.reduce((total, item) => {
-      const product = data.find((product) => product.id === item.id);
-      return total + product.price * item.qty;
+      const product = products.find((product) => product.id === item.id);
+      return total + product?.price * item.qty;
     }, 0);
-  }, [cart]); // <- data yang lagi dipantau perubahannya
+  }, [cart, products]); // <- data yang lagi dipantau perubahannya
 
   // useEffect untuk menghitung total harga dan menyimpan data Cart ke localStorage
   useEffect(() => {
@@ -173,7 +192,7 @@ const ProductsPage = () => {
             <ul className="absolute bg-white text-black w-[300px] mt-1 py-2 px-3 rounded-lg">
               {searchProduct.map((product) => (
                 <li key={product.id} className="my-1">
-                  {product.name}
+                  {product.title}
                 </li>
               ))}
             </ul>
@@ -186,10 +205,10 @@ const ProductsPage = () => {
           <h1 className="text-3xl font-bold mb-2 uppercase">Products</h1>
           {/* products */}
           <div className="flex flex-wrap gap-4">
-            {data.map((item) => (
+            {products.map((item) => (
               <CardProduct key={item.id}>
                 <CardProduct.Header image={item.image} />
-                <CardProduct.Body title={item.name} desc={item.desc} />
+                <CardProduct.Body title={item.title} desc={item.description} />
                 <CardProduct.Footer
                   price={item.price}
                   onClick={() => {
@@ -202,29 +221,29 @@ const ProductsPage = () => {
         </div>
         {/* cart */}
         {cart.length > 0 && (
-          <div className="cart w-1/3">
+          <div className="cart w-2/3">
             <h1 className="text-3xl font-bold mb-2 uppercase">Cart</h1>
             <div className="flex flex-col gap-2">
               {cart.map((item) => {
                 // logic untuk nyari id dalam variabel data, kalo id yang di data sama dengan id yang ada di cart maka ambil produknya
-                const datas = data.find((data) => data.id === item.id);
+                const datas = products.find((data) => data.id === item.id);
                 return (
                   <>
                     <div key={item.id} className="flex p-4 border rounded-lg">
                       <Image
-                        src={datas.image}
-                        width={500}
-                        height={500}
+                        src={datas?.image}
+                        width={100}
+                        height={100}
                         alt="cart item"
-                        className="max-w-[100px]"
+                        className="aspect-square object-contain"
                       />
                       <div className="flex justify-between w-full">
                         <div className="flex flex-col justify-between ml-3">
-                          <span className="font-bold text-xl">
-                            {datas.name}
+                          <span className="font-bold text-xl line-clamp-2">
+                            {datas?.title}
                           </span>
                           <span className="font-semibold">
-                            {(datas.price * item.qty).toLocaleString("id-ID", {
+                            {(datas?.price * item.qty).toLocaleString("id-ID", {
                               style: "currency",
                               currency: "IDR",
                             })}
