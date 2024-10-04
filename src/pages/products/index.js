@@ -11,7 +11,7 @@ import React, {
 import { data } from "@/constant/data";
 import BackToTop from "@/components/atoms/Icons/BackToTop";
 import { getProducts } from "@/services/products";
-import { getUsername } from "@/services/auth";
+import { getUsername, login } from "@/services/auth";
 import useLogin from "@/hooks/useLogin";
 import formatCurrency from "@/helpers/utils/formatCurrency";
 
@@ -297,9 +297,25 @@ const ProductsPage = ({ products }) => {
  * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
  * teknik ini bermanfaat untuk meningkatkan performa sebsite*/
 export async function getServerSideProps() {
+  // // cara pertama untuk manggil service satu satu
+  // try {
+  //   const products = await getProducts();
+  //   const slicedProducts = products.slice(0, 8);
+  //   return {
+  //     props: {
+  //       products: slicedProducts || [],
+  //     },
+  //   };
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
+  // cara kedua manggil beberapa service sekaligus menggunakan promise menggunakan Promise.all
+  // CONTOH : const [productResults, userLogin] = await Promise.all([getProducts(), login()]);
   try {
+    const [productsResults] = await Promise.all([getProducts()]);
+    const slicedProducts = productsResults.slice(0, 8);
     const products = await getProducts();
-    const slicedProducts = products.slice(0, 8);
     return {
       props: {
         products: slicedProducts || [],
