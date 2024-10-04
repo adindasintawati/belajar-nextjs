@@ -11,6 +11,7 @@ import React, {
 import { data } from "@/constant/data";
 import BackToTop from "@/components/atoms/Icons/BackToTop";
 import { getProducts } from "@/services/products";
+import { getUsername } from "@/services/auth";
 
 const ProductsPage = () => {
   const footerRef = useRef();
@@ -50,12 +51,24 @@ const ProductsPage = () => {
 
   // useEffect untuk mendapatkan data dari localStorage
   useEffect(() => {
-    const getUsername = localStorage.getItem("username");
-    if (getUsername) {
-      setUsername(getUsername);
+    const token = localStorage.getItem("token");
+    if (token) {
+      setUsername(getUsername(token));
+    } else {
+      window.location.href = "/login";
     }
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
+
+  // USEEFFECT PAKE NEXTJS BIASA
+  // // useEffect untuk mendapatkan data dari localStorage
+  // useEffect(() => {
+  //   const getUsername = localStorage.getItem("username");
+  //   if (getUsername) {
+  //     setUsername(getUsername);
+  //   }
+  //   setCart(JSON.parse(localStorage.getItem("cart")) || []);
+  // }, []);
   /** useEffect(() => []) : hooks dari react yang memungkinkan kita untuk menambahkan side effect ke functional component
    * useEffect dipake untuk memperbarui komponen ketika ada perubahan pada state.
    * [] (array kosong/depency array) : argumen kedua milik useEffect yang artinya efek ini akan dijalankan sekali
