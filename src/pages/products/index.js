@@ -15,7 +15,7 @@ import { getUsername } from "@/services/auth";
 import useLogin from "@/hooks/useLogin";
 import formatCurrency from "@/helpers/utils/formatCurrency";
 
-const ProductsPage = () => {
+const ProductsPage = ({ products }) => {
   const footerRef = useRef();
   // useref : hooks dari react yang dipake untuk membuat referensi ke elemen DOM atau mengakses elemen DOM (DOM adalah elemen/tag HTML)
   const username = useLogin();
@@ -25,20 +25,20 @@ const ProductsPage = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [products, setProducts] = useState([]); // <- state untuk nyimpen data dari API
+  // const [products, setProducts] = useState([]); // <- state untuk nyimpen data dari API
 
   // useEffect untuk manggil service getProducts
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const dataProduct = await getProducts();
-        setProducts(dataProduct.slice(0, 8));
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchProducts();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchProducts() {
+  //     try {
+  //       const dataProduct = await getProducts();
+  //       setProducts(dataProduct.slice(0, 8));
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  //   fetchProducts();
+  // }, []);
 
   const searchProduct = useMemo(() => {
     return products.filter((product) =>
@@ -292,5 +292,22 @@ const ProductsPage = () => {
     </>
   );
 };
+
+/** Server Side Rendering : teknik memuat halaman yang dimana proses rendering tersebut
+ * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
+ * teknik ini bermanfaat untuk meningkatkan performa sebsite*/
+export async function getServerSideProps() {
+  try {
+    const products = await getProducts();
+    const slicedProducts = products.slice(0, 8);
+    return {
+      props: {
+        products: slicedProducts || [],
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default ProductsPage;
