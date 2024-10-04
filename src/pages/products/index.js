@@ -296,7 +296,7 @@ const ProductsPage = ({ products }) => {
 /** Server Side Rendering (SSR) : teknik memuat halaman yang dimana proses rendering tersebut
  * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
  * teknik ini bermanfaat untuk meningkatkan performa website
- * teknik ini di khususkan untuk halaman website yang datanya bisa di ubah-ubah.*/
+ * teknik ini di khususkan untuk halaman website yang datanya dinamis atau bisa di ubah-ubah.*/
 
 // export async function getServerSideProps() {
 //   // // cara pertama untuk manggil service satu satu
@@ -336,6 +336,25 @@ const ProductsPage = ({ products }) => {
  * build time : adalah proses penyiapan aplikasi disisi server saat di deploy
  * run time : proses setelah build dimana aplikasi dijalanin di server/browser
  */
+// export async function getStaticProps() {
+//   try {
+//     const [productsResults] = await Promise.all([getProducts()]);
+//     const slicedProducts = productsResults.slice(0, 8);
+//     const products = await getProducts();
+//     return {
+//       props: {
+//         products: slicedProducts || [],
+//       },
+//     };
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+/** Incremental site generation (ISG) : teknik yang menggabungkan SSR dan SSG, dimana teknik ini
+ * memuat halaman website secara statis namun halamannya bisa di update secara dinamis
+ * jika ada perubahan data. */
+
 export async function getStaticProps() {
   try {
     const [productsResults] = await Promise.all([getProducts()]);
@@ -345,6 +364,7 @@ export async function getStaticProps() {
       props: {
         products: slicedProducts || [],
       },
+      revalidate: 60, //<- revalidate akan merefresh/mengupdate data setelah 60detik
     };
   } catch (error) {
     console.log(error);
