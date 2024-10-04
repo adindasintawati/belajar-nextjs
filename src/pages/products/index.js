@@ -293,25 +293,50 @@ const ProductsPage = ({ products }) => {
   );
 };
 
-/** Server Side Rendering : teknik memuat halaman yang dimana proses rendering tersebut
+/** Server Side Rendering (SSR) : teknik memuat halaman yang dimana proses rendering tersebut
  * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
- * teknik ini bermanfaat untuk meningkatkan performa sebsite*/
-export async function getServerSideProps() {
-  // // cara pertama untuk manggil service satu satu
-  // try {
-  //   const products = await getProducts();
-  //   const slicedProducts = products.slice(0, 8);
-  //   return {
-  //     props: {
-  //       products: slicedProducts || [],
-  //     },
-  //   };
-  // } catch (error) {
-  //   console.log(error);
-  // }
+ * teknik ini bermanfaat untuk meningkatkan performa website
+ * teknik ini di khususkan untuk halaman website yang datanya bisa di ubah-ubah.*/
 
-  // cara kedua manggil beberapa service sekaligus menggunakan promise menggunakan Promise.all
-  // CONTOH : const [productResults, userLogin] = await Promise.all([getProducts(), login()]);
+// export async function getServerSideProps() {
+//   // // cara pertama untuk manggil service satu satu
+//   // try {
+//   //   const products = await getProducts();
+//   //   const slicedProducts = products.slice(0, 8);
+//   //   return {
+//   //     props: {
+//   //       products: slicedProducts || [],
+//   //     },
+//   //   };
+//   // } catch (error) {
+//   //   console.log(error);
+//   // }
+
+//   // cara kedua manggil beberapa service sekaligus menggunakan promise menggunakan Promise.all
+//   // CONTOH : const [productResults, userLogin] = await Promise.all([getProducts(), login()]);
+//   try {
+//     const [productsResults] = await Promise.all([getProducts()]);
+//     const slicedProducts = productsResults.slice(0, 8);
+//     const products = await getProducts();
+//     return {
+//       props: {
+//         products: slicedProducts || [],
+//       },
+//     };
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+/** Static site generationm (SSG) : teknik yang memuat halaman website pada saat proses build time (npm run build)
+ * dan halaman websitenya bisa di cache sehingga ketika user kembali ke halaman dengan SSG
+ * proses memuatnya lebih cepat.
+ * teknik ini di khususkan untuk halaman website yang datanya statis atau tidak berubah-ubah.
+ *
+ * build time : adalah proses penyiapan aplikasi disisi server saat di deploy
+ * run time : proses setelah build dimana aplikasi dijalanin di server/browser
+ */
+export async function getStaticProps() {
   try {
     const [productsResults] = await Promise.all([getProducts()]);
     const slicedProducts = productsResults.slice(0, 8);
