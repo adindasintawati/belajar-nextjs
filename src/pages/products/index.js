@@ -14,6 +14,7 @@ import { getProducts } from "@/services/products";
 import { getUsername, login } from "@/services/auth";
 import useLogin from "@/hooks/useLogin";
 import formatCurrency from "@/helpers/utils/formatCurrency";
+import Modal from "@/components/atoms/Modal";
 
 const ProductsPage = ({ products }) => {
   const footerRef = useRef();
@@ -25,6 +26,7 @@ const ProductsPage = ({ products }) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   // const [products, setProducts] = useState([]); // <- state untuk nyimpen data dari API
 
   // useEffect untuk manggil service getProducts
@@ -56,6 +58,10 @@ const ProductsPage = ({ products }) => {
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
+
+  const handelClose = () => {
+    setShowModal(false);
+  };
 
   // USEEFFECT PAKE NEXTJS BIASA
   // // useEffect untuk mendapatkan data dari localStorage
@@ -208,7 +214,16 @@ const ProductsPage = ({ products }) => {
             </ul>
           )}
         </div>
-        <Button color="bg-red-500" textButton="Logout" onClick={handleLogout} />
+        <Button
+          color="bg-red-500"
+          textButton="Logout"
+          onClick={() => {
+            setShowModal(true);
+          }}
+        />
+        {showModal && (
+          <Modal handleClose={handelClose} handleLogout={handleLogout} />
+        )}
       </div>
       <div className="flex px-5 py-4">
         <div className="flex flex-col">

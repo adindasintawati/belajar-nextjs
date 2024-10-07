@@ -2,12 +2,14 @@
  * file ini akan menjadi halaman utama di aplikasi nextjs*/
 
 import Button from "@/components/atoms/Button";
+import CardProduct from "@/components/molecules/CardProduct";
 import Card from "@/components/molecules/CardWithChildren";
 import { isMobileScreenAtom } from "@/jotai/atoms";
+import { getEvents } from "@/services/events";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 
-export default function Home() {
+export default function Home({ events }) {
   // panggil state isMobileScreen dari jotai yang udah di diset secara global
   const [isMobileScreen, setIsMobileScreen] = useAtom(isMobileScreenAtom);
   // dibawah ini state biasa
@@ -34,32 +36,27 @@ export default function Home() {
         <h1>ini halaman desktop</h1>
       )}
       <Button />
-
-      {!isMobileScreen && (
-        <>
-          {/* cara menggunakan komponen dan props */}
-          {/* cara menggunakan komponen dengan children */}
-          {/* <Card> </Card> adalah parentnya*/}
-          <Card cardClassname={"p-4"}>
-            {/* awal komponen children */}
-            <h2 className="text-xl font-bold my-3">Card Title</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
-              soluta suscipit tenetur sint placeat accusamus sed voluptatibus
-              amet aperiam voluptate.
-            </p>
-            {/* akhir komponen children */}
-          </Card>
-          <Card cardClassname={"p-2"}>
-            <h2 className="text-xl font-bold my-3">Card Title 2</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
-              soluta suscipit tenetur sint placeat accusamus sed voluptatibus
-              amet aperiam voluptate.
-            </p>
-          </Card>
-        </>
-      )}
+      <div className="flex gap-6">
+        {events.map((item) => (
+          <CardProduct key={item.id}>
+            <CardProduct.Body title={item.title} desc={item.participant} />
+            {item.location}
+          </CardProduct>
+        ))}
+      </div>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  try {
+    const [eventResult] = await Promise.all([getEvents()]);
+    return {
+      props: {
+        events: eventResult?.content,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
