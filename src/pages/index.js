@@ -3,12 +3,28 @@
 
 import Button from "@/components/atoms/Button";
 import Card from "@/components/molecules/CardWithChildren";
-import { useSelector } from "react-redux";
+import { isMobileScreenAtom } from "@/jotai/atoms";
+import { setIsMobileScreen } from "@/redux/screen/action";
+import { useAtom } from "jotai";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  const { isMobileScreen, isLargeScreen } = useSelector(
-    (state) => state.screen.isMobileScreen
-  );
+  // panggil state isMobileScreen dari jotai yang udah di diset secara global
+  const [isMobileScreen] = useAtom(isMobileScreenAtom);
+  // dibawah ini state biasa
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobileScreen(window.innerWidth < 768);
+      setIsLargeScreen(window.innerWidth >= 1240);
+    }
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [setIsMobileScreen]);
+
   console.log(isMobileScreen, isLargeScreen);
 
   return (
@@ -19,6 +35,7 @@ export default function Home() {
         <h1>ini halaman desktop</h1>
       )}
       <Button />
+
       {!isMobileScreen && (
         <>
           {/* cara menggunakan komponen dan props */}
