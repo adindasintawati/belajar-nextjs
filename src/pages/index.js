@@ -4,13 +4,12 @@
 import Button from "@/components/atoms/Button";
 import Card from "@/components/molecules/CardWithChildren";
 import { isMobileScreenAtom } from "@/jotai/atoms";
-import { setIsMobileScreen } from "@/redux/screen/action";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 
 export default function Home() {
   // panggil state isMobileScreen dari jotai yang udah di diset secara global
-  const [isMobileScreen] = useAtom(isMobileScreenAtom);
+  const [isMobileScreen, setIsMobileScreen] = useAtom(isMobileScreenAtom);
   // dibawah ini state biasa
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 

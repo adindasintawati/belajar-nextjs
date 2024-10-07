@@ -5,16 +5,16 @@ import { useSetAtom } from "jotai";
 
 export default function App({ Component, pageProps }) {
   // useSetAtom buat memperbaharui nilai state
-  const setIsMobileScreen = useSetAtom(isMobileScreenAtom);
+  // const setIsMobileScreen = useSetAtom(isMobileScreenAtom);
 
-  useEffect(() => {
-    function handleResize() {
-      setIsMobileScreen(Window.innerWidth < 768);
-    }
-    handleResize();
+  // useEffect(() => {
+  //   function handleResize() {
+  //     setIsMobileScreen(Window.innerWidth < 768);
+  //   }
+  //   handleResize();
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [setIsMobileScreen]);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, [setIsMobileScreen]);
   return <Component {...pageProps} />;
 }
