@@ -19,3 +19,13 @@ export async function getProducts() {
     console.log(error);
   }
 }
+
+export async function getProductById(id) {
+  try {
+    const response = await axios.get(`${api}/products/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}

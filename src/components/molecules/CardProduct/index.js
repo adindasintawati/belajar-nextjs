@@ -1,16 +1,19 @@
 import Button from "@/components/atoms/Button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 /**CardProduct : Komponen utama/parent sebagai pembungkus/container untuk beberapa komponen children(Header, Body, & Footer)*/
-const CardProduct = ({ children }) => {
+const CardProduct = ({ children, link = "#" }) => {
   return (
     <>
-      <div className="rounded-lg bg-gradient-to-r from-violet-500 via-blue-500 to bg-sky-600 p-1 shadow-xl">
-        <div className="flex flex-col w-full max-w-xs h-full bg-white rounded-lg">
-          {children}
+      <Link href={link}>
+        <div className="rounded-lg bg-gradient-to-r from-violet-500 via-blue-500 to bg-sky-600 p-1 shadow-xl">
+          <div className="flex flex-col w-full max-w-xs h-full bg-white rounded-lg">
+            {children}
+          </div>
         </div>
-      </div>
+      </Link>
     </>
   );
 };
